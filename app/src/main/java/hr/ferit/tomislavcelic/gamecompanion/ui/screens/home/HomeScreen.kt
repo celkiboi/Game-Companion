@@ -40,9 +40,9 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     nav: NavHostController,
     eventVM: EventViewModel = viewModel(),
-    authVM:  AuthViewModel  = viewModel()
+    authVM:  AuthViewModel = viewModel()
 ) {
-    val events by eventVM.events
+    val events by eventVM.events.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
