@@ -17,15 +17,14 @@ import androidx.compose.ui.unit.dp
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.AuthViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavHostController
+import hr.ferit.tomislavcelic.gamecompanion.ui.navigation.navigateTopLevel
 
 @Composable
 fun AppDrawerContent(
     drawerState: DrawerState,
     authVM: AuthViewModel,
-    onGotoHome: () -> Unit = {},
-    onGotoAllEvents: () -> Unit = {},
-    onGotoGames: () -> Unit = {},
-    onGotoSettings: () -> Unit = {},
+    nav: NavHostController,
     onUsername: () -> Unit = { authVM.logout() }
 ) {
     val scope = rememberCoroutineScope()
@@ -45,26 +44,26 @@ fun AppDrawerContent(
         /* nav items */
         NavigationDrawerItem(
             label = { Text("Home") },
-            selected = false,
-            onClick = { closeAnd(onGotoHome) }
+            selected = nav.currentDestination?.route == "home",
+            onClick = { closeAnd { nav.navigateTopLevel("home") } }
         )
         NavigationDrawerItem(
             label = { Text("All events") },
-            selected = false,
-            onClick  = { closeAnd(onGotoAllEvents) }
+            selected = nav.currentDestination?.route == "allevents",
+            onClick  = { closeAnd { } }
         )
         NavigationDrawerItem(
             label = { Text("Games") },
-            selected = false,
-            onClick  = { closeAnd(onGotoGames) }
+            selected = nav.currentDestination?.route == "games",
+            onClick  = { closeAnd { nav.navigateTopLevel("games") } }
         )
 
         Spacer(Modifier.weight(1f))
 
         NavigationDrawerItem(
             label = { Text("Settings") },
-            selected = false,
-            onClick = { closeAnd(onGotoSettings) }
+            selected = nav.currentDestination?.route == "settings",
+            onClick = { closeAnd { } }
         )
 
         HorizontalDivider()

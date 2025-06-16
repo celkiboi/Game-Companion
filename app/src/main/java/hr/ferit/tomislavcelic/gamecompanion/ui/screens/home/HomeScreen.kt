@@ -31,12 +31,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.AppDrawerContent
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
+    nav: NavHostController,
     eventVM: EventViewModel = viewModel(),
     authVM:  AuthViewModel  = viewModel()
 ) {
@@ -47,7 +49,7 @@ fun HomeScreen(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            AppDrawerContent(drawerState, authVM)
+            AppDrawerContent(drawerState, authVM, nav)
         }
     ) {
         Scaffold(
