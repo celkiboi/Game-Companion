@@ -9,6 +9,7 @@ import hr.ferit.tomislavcelic.gamecompanion.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -21,6 +22,14 @@ class AuthViewModel(
     val user = repo.authState.stateIn(
         viewModelScope, SharingStarted.Eagerly, repo.currentUser
     )
+
+    val displayName: StateFlow<String> = user
+        .map { u ->
+            u?.displayName?.takeIf { it.isNotBlank() }
+                ?: u?.email
+                ?: "Guest"
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "Guest")
 
     fun login(email: String, pass: String) = viewModelScope.launch {
         try {
