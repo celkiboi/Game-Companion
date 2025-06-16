@@ -1,4 +1,4 @@
-package hr.ferit.tomislavcelic.gamecompanion.model
+package hr.ferit.tomislavcelic.gamecompanion.data.model
 
 data class GameEvent(
     val title: String = "",
