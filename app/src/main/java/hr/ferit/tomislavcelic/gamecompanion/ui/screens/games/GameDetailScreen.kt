@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.ui.Alignment
+import hr.ferit.tomislavcelic.gamecompanion.ui.components.EventList
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,21 +100,10 @@ fun GameDetailScreen(
                 modifier = Modifier
                     .padding(start = 16.dp, top = 8.dp, bottom = 4.dp)
             )
-            LazyColumn(
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(
-                    items = events,
-                    key = { it.gameKey }
-                ) { e ->
-                    ListItem(
-                        headlineContent = { Text(e.title) },
-                        supportingContent = { Text("Expires ${e.expires}") }
-                    )
-                    HorizontalDivider()
-                }
-            }
+            EventList(
+                events = events,
+                contentPadding = PaddingValues(0.dp)
+            )
         }
     }
 }

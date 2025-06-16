@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.AppDrawerContent
+import hr.ferit.tomislavcelic.gamecompanion.ui.components.EventList
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
@@ -70,15 +71,10 @@ fun HomeScreen(
                 )
             }
         ) { padding ->
-            LazyColumn(contentPadding = padding) {
-                items(events) { e ->
-                    ListItem(
-                        headlineContent    = { Text(e.title) },
-                        supportingContent  = { Text("expires ${e.expires}") }
-                    )
-                    HorizontalDivider()
-                }
-            }
+            EventList(
+                events = events,
+                contentPadding = padding
+            )
         }
     }
 }
