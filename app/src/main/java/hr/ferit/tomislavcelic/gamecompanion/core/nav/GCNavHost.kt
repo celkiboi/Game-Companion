@@ -8,6 +8,9 @@ import androidx.navigation.compose.composable
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GamesScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.home.HomeScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.LoginScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GameDetailScreen
 
 
 @ExperimentalMaterial3Api
@@ -17,5 +20,17 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
         composable("login") { LoginScreen() }
         composable("games")   { GamesScreen(nav) }
         composable("home")  { HomeScreen(nav) }
+
+        composable(
+            route = "game/{key}/{name}",
+            arguments = listOf(
+                navArgument("key")  { type = NavType.StringType },
+                navArgument("name") { type = NavType.StringType }
+            )
+        ) { backStack ->
+            val key  = backStack.arguments?.getString("key")!!
+            val name = backStack.arguments?.getString("name")!!
+            GameDetailScreen(nav = nav, gameKey = key, gameName = name)
+        }
     }
 }

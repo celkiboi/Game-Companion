@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.AuthRepository
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.EventRepository
-import hr.ferit.tomislavcelic.gamecompanion.data.repository.fetchEvents
 import kotlinx.coroutines.launch
 
 

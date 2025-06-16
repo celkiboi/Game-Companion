@@ -72,7 +72,7 @@ fun GamesScreen(
                     .padding(12.dp)
             ) {
                 items(items = games) { g ->
-                    GameTile(game = g)
+                    GameTile(game = g, nav)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package hr.ferit.tomislavcelic.gamecompanion.ui.screens.games
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import hr.ferit.tomislavcelic.gamecompanion.data.model.Game
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
@@ -21,9 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavHostController
 
 @Composable
-fun GameTile(game: Game) {
+fun GameTile(game: Game, nav: NavHostController) {
     val ctx = LocalContext.current
 
     val resId = remember(game.key) {
@@ -35,7 +38,10 @@ fun GameTile(game: Game) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp),
+            .height(160.dp)
+            .clickable {
+                nav.navigate("game/${game.key}/${Uri.encode(game.name)}")
+            },
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
