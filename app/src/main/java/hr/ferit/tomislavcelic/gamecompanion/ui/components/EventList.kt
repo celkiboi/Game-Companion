@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import hr.ferit.tomislavcelic.gamecompanion.data.model.GameEvent
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
+import hr.ferit.tomislavcelic.gamecompanion.ui.time.formatForUi
 
 
 @Composable
@@ -24,7 +25,7 @@ fun EventList(
         items(events, key = { it.gameKey }) { e ->
             ListItem(
                 headlineContent   = { Text(e.title) },
-                supportingContent = { Text("Expires ${e.expires}") }
+                supportingContent = { Text("Expires ${e.expires?.formatForUi()}") }
             )
             HorizontalDivider()
         }
