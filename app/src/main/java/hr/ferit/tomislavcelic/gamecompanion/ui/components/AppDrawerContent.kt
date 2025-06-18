@@ -53,6 +53,11 @@ fun AppDrawerContent(
             onClick  = { closeAnd { } }
         )
         NavigationDrawerItem(
+            label = { Text("Challenges") },
+            selected = nav.currentDestination?.route == "challenges",
+            onClick  = { closeAnd { } }
+        )
+        NavigationDrawerItem(
             label = { Text("Games") },
             selected = nav.currentDestination?.route == "games",
             onClick  = { closeAnd { nav.navigateTopLevel("games") } }

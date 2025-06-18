@@ -52,5 +52,7 @@ class GamesViewModel(
             Game("Call of Duty: Warzone II", "warzone"),
             Game("World of Warcraft", "wow")
         )
+
+        val gameNameMap = GamesViewModel.hardcodedGames.associate { it.key to it.name }
     }
 }

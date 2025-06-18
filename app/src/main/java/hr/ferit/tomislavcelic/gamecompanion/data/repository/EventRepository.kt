@@ -19,17 +19,17 @@ class EventRepository(
         userEvents(uid).get().await().mapNotNull { it.toObject(GameEvent::class.java) }
 
     fun observeUserEvents(uid: String): Flow<List<GameEvent>> = callbackFlow {
-        val reg: ListenerRegistration = userEvents(uid)
-            .addSnapshotListener { snap, err ->
-                if (err != null) {
-                    close(err)
-                    return@addSnapshotListener
-                }
-                val list = snap?.documents
-                    ?.mapNotNull { it.toObject(GameEvent::class.java) }
-                    ?: emptyList()
-                trySend(list)
+        val reg = userEvents(uid).addSnapshotListener { snap, err ->
+            if (err != null) {
+                close(err); return@addSnapshotListener
             }
+            val list = snap?.documents?.mapNotNull { doc ->
+                doc.toObject(GameEvent::class.java)?.apply {
+                    id = doc.id
+                }
+            } ?: emptyList()
+            trySend(list)
+        }
         awaitClose { reg.remove() }
     }
 }

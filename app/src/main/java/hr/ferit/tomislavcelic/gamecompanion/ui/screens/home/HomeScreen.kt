@@ -73,7 +73,8 @@ fun HomeScreen(
         ) { padding ->
             EventList(
                 events = events,
-                contentPadding = padding
+                contentPadding = padding,
+                nav = nav
             )
         }
     }

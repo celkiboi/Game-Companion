@@ -102,7 +102,8 @@ fun GameDetailScreen(
             )
             EventList(
                 events = events,
-                contentPadding = PaddingValues(0.dp)
+                contentPadding = PaddingValues(0.dp),
+                nav = nav
             )
         }
     }

@@ -10,6 +10,7 @@ import hr.ferit.tomislavcelic.gamecompanion.ui.screens.home.HomeScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.LoginScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import hr.ferit.tomislavcelic.gamecompanion.ui.screens.events.EventDetailScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GameDetailScreen
 
 
@@ -28,9 +29,19 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
                 navArgument("name") { type = NavType.StringType }
             )
         ) { backStack ->
-            val key  = backStack.arguments?.getString("key")!!
+            val key = backStack.arguments?.getString("key")!!
             val name = backStack.arguments?.getString("name")!!
             GameDetailScreen(nav = nav, gameKey = key, gameName = name)
+        }
+
+        composable(
+            route = "event/{id}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType }
+            )
+        ) { backStack ->
+            val id = backStack.arguments?.getString("id")!!
+            EventDetailScreen(nav = nav, eventId = id)
         }
     }
 }
