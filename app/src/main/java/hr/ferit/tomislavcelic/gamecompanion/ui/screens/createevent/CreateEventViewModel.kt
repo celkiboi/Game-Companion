@@ -8,9 +8,11 @@ import hr.ferit.tomislavcelic.gamecompanion.data.model.GameEvent
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.AuthRepository
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.EventRepository
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.GamesRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -18,11 +20,14 @@ import kotlinx.coroutines.launch
 
 class CreateEventViewModel(
     private val preselectKey: String?,
-    val isChallenge: Boolean,
+    private val initialIsChallenge: Boolean,
     authRepo: AuthRepository = AuthRepository(),
     private val eventRepo: EventRepository = EventRepository(),
     private val gamesRepo: GamesRepository = GamesRepository()
 ) : ViewModel() {
+
+    private val _isChallenge = MutableStateFlow(initialIsChallenge)
+    val isChallenge = _isChallenge.asStateFlow()
 
     val allGames: StateFlow<List<Game>> =
         gamesRepo.observeAllGames(authRepo.currentUser?.uid)
@@ -35,17 +40,34 @@ class CreateEventViewModel(
     val additionalInfo = MutableStateFlow("")
 
     val goal = MutableStateFlow(0)
-    val challengeInfo   = MutableStateFlow("")
+    val challengeInfo = MutableStateFlow("")
 
     private val uid = authRepo.currentUser?.uid
 
-    val saveEnabled = combine(
-        title, selectedKey, expires, starts, goal
-    ) { t, k, exp, sta, g ->
-        t.isNotBlank() && k.isNotBlank() && exp != null &&
-                (sta == null || sta < exp) &&
-                (!isChallenge || g > 0)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    private val baseEnabled: Flow<Boolean> = combine(
+        title,
+        selectedKey,
+        expires,
+        starts
+    ) { title, key, expire, start ->
+        title.isNotBlank() &&
+                key.isNotBlank() &&
+                expire != null &&
+                (start == null || start < expire)
+    }
+
+    val saveEnabled: StateFlow<Boolean> = combine(baseEnabled, goal, isChallenge) { base, goal, challenge ->
+        if (challenge) base && (goal > 0)
+        else base
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = false
+    )
+
+    fun toggleChallenge() {
+        _isChallenge.value = !_isChallenge.value
+    }
 
     fun save(onDone: (String) -> Unit, onError: (Throwable) -> Unit) {
         val uid = uid ?: return
@@ -57,7 +79,7 @@ class CreateEventViewModel(
                     additionalInfo = additionalInfo.value,
                     starts = starts.value,
                     expires = expires.value,
-                    isChallenge = isChallenge,
+                    isChallenge = isChallenge.value,
                     currentProgress = 0,
                     challengeGoal = goal.value,
                     challengeInfo = challengeInfo.value

@@ -49,10 +49,11 @@ fun CreateEventScreen(
 
     val allGames by viewModel.allGames.collectAsState()
     val saveOK by viewModel.saveEnabled.collectAsState()
+    val challenge by viewModel.isChallenge.collectAsState()
 
     Scaffold(
         topBar = {
-            val title = if (isChallenge) "Create challenge" else "Create event"
+            val title = if (challenge) "Create challenge" else "Create event"
             TopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
@@ -124,7 +125,7 @@ fun CreateEventScreen(
                 minLines = 3
             )
 
-            if (isChallenge) {
+            if (challenge) {
                 OutlinedTextField(
                     value = viewModel.goal.collectAsState().value.toString(),
                     onValueChange = { viewModel.goal.value = it.toIntOrNull() ?: 0 },
@@ -141,6 +142,10 @@ fun CreateEventScreen(
                     minLines = 2
                 )
             }
+
+            val modeSwitchButtonText = if (!challenge) "Add a challenge instead" else "Add an event instead"
+            TextButton(onClick = viewModel::toggleChallenge)
+            { Text(modeSwitchButtonText) }
 
             Text(
                 "* Expires is required.  Starts may be blank (starts immediately).",
