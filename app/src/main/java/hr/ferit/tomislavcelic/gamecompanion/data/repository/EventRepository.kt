@@ -47,4 +47,7 @@ class EventRepository(
             }
         awaitClose { reg.remove() }
     }
+
+    suspend fun addEvent(uid: String, event: GameEvent): String =
+        userEvents(uid).add(event).await().id
 }

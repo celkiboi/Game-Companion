@@ -14,7 +14,7 @@ import hr.ferit.tomislavcelic.gamecompanion.ui.screens.allevents.AllEventsScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.challenges.ChallengesScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.events.EventDetailScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GameDetailScreen
-
+import hr.ferit.tomislavcelic.gamecompanion.ui.screens.createevent.CreateEventScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -46,6 +46,21 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
         ) { backStack ->
             val id = backStack.arguments?.getString("id")!!
             EventDetailScreen(nav = nav, eventId = id)
+        }
+
+        composable(
+            route =
+                "createEvent?" +
+                        "gameKey={gameKey}&" +
+                        "isChallenge={isChallenge}",
+            arguments = listOf(
+                navArgument("gameKey") { type = NavType.StringType; nullable = true },
+                navArgument("isChallenge") { type = NavType.BoolType;  defaultValue = false }
+            )
+        ) { backStack ->
+            val gameKey = backStack.arguments?.getString("gameKey")
+            val isChallenge = backStack.arguments?.getBoolean("isChallenge") ?: false
+            CreateEventScreen(nav, gameKey, isChallenge)
         }
     }
 }

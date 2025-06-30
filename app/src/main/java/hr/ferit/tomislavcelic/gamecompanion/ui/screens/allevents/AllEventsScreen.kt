@@ -1,6 +1,7 @@
 package hr.ferit.tomislavcelic.gamecompanion.ui.screens.allevents
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,9 +53,13 @@ fun AllEventsScreen(
                                     else drawerState.open()
                                 }
                             }
-                        ) { Icon(Icons.Default.Menu, null) }
+                        ) { Icon(Icons.Default.Menu, contentDescription = "Menu") }
                     },
                     actions = {
+                        IconButton(
+                            onClick = { nav.navigate("createEvent?isChallenge=false") }
+                        ) { Icon(Icons.Default.Add, contentDescription = "New") }
+
                         SortMenu(
                             current = sortOpt,
                             onPick = allViewModel::setSort,
