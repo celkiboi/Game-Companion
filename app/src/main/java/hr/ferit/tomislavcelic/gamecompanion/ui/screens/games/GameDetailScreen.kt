@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.ui.Alignment
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.EventList
@@ -57,6 +58,11 @@ fun GameDetailScreen(
                     IconButton(onClick = { nav.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { nav.navigate("createEvent?isChallenge=false&gameKey=${gameKey}") }
+                    ) { Icon(Icons.Default.Add, contentDescription = "New") }
                 }
             )
         }

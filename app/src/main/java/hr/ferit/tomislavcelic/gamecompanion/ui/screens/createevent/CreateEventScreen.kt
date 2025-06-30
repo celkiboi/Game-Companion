@@ -96,15 +96,11 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            if (presetGameKey == null) {
-                GamePicker(
-                    allGames = allGames,
-                    selectedKey = viewModel.selectedKey.collectAsState().value,
-                    onPick = { viewModel.selectedKey.value = it }
-                )
-            } else {
-                Text("Game: ${nameFromKey(presetGameKey, allGames)}")
-            }
+            GamePicker(
+                allGames = allGames,
+                selectedKey = viewModel.selectedKey.collectAsState().value,
+                onPick = { viewModel.selectedKey.value = it }
+            )
 
             DateTimeField(
                 label = "Starts*",

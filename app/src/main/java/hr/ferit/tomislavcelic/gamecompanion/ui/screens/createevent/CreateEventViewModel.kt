@@ -14,7 +14,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -43,6 +44,19 @@ class CreateEventViewModel(
     val challengeInfo = MutableStateFlow("")
 
     private val uid = authRepo.currentUser?.uid
+
+    init {
+        viewModelScope.launch {
+            allGames
+                .filter { it.isNotEmpty() }
+                .first()
+                .let { games ->
+                    if (selectedKey.value.isBlank()) {
+                        selectedKey.value = games.first().key
+                    }
+                }
+        }
+    }
 
     private val baseEnabled: Flow<Boolean> = combine(
         title,
