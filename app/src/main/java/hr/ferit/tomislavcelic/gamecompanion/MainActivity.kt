@@ -24,10 +24,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             GameCompanionTheme {
                 val authVM: AuthViewModel = viewModel()
-                val nav     = rememberNavController()
+                val nav = rememberNavController()
                 val user by authVM.user.collectAsState()
 
-                // whenever auth state changes, move to right screen
                 LaunchedEffect(user) {
                     nav.navigate(if (user == null) "login" else "home") {
                         popUpTo(nav.graph.startDestinationId) { inclusive = true }

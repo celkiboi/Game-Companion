@@ -1,5 +1,8 @@
 package hr.ferit.tomislavcelic.gamecompanion.core.nav
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideOut
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -31,7 +34,16 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
             arguments = listOf(
                 navArgument("key")  { type = NavType.StringType },
                 navArgument("name") { type = NavType.StringType }
-            )
+            ),
+            popExitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(500))
+            },
+            enterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(500))
+            },
+            popEnterTransition = {
+                null
+            }
         ) { backStack ->
             val key = backStack.arguments?.getString("key")!!
             val name = backStack.arguments?.getString("name")!!
@@ -42,7 +54,13 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
             route = "event/{id}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType }
-            )
+            ),
+            popExitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(500))
+            },
+            enterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(500))
+            }
         ) { backStack ->
             val id = backStack.arguments?.getString("id")!!
             EventDetailScreen(nav = nav, eventId = id)
@@ -56,7 +74,13 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
             arguments = listOf(
                 navArgument("gameKey") { type = NavType.StringType; nullable = true },
                 navArgument("isChallenge") { type = NavType.BoolType;  defaultValue = false }
-            )
+            ),
+            popExitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down, tween(500))
+            },
+            enterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up, tween(500))
+            }
         ) { backStack ->
             val gameKey = backStack.arguments?.getString("gameKey")
             val isChallenge = backStack.arguments?.getBoolean("isChallenge") ?: false
