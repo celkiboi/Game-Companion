@@ -32,4 +32,19 @@ class EventRepository(
         }
         awaitClose { reg.remove() }
     }
+
+    fun observeUserChallenges(uid: String): Flow<List<GameEvent>> = callbackFlow {
+        val reg = userEvents(uid)
+            .whereEqualTo("isChallenge", true)
+            .addSnapshotListener { snap, err ->
+                if (err != null) {
+                    close(err); return@addSnapshotListener
+                }
+                val list = snap?.documents?.mapNotNull { doc ->
+                    doc.toObject(GameEvent::class.java)?.apply { id = doc.id }
+                } ?: emptyList()
+                trySend(list)
+            }
+        awaitClose { reg.remove() }
+    }
 }
