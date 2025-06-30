@@ -50,4 +50,8 @@ class EventRepository(
 
     suspend fun addEvent(uid: String, event: GameEvent): String =
         userEvents(uid).add(event).await().id
+
+    suspend fun deleteEvent(uid: String, eventId: String) {
+        userEvents(uid).document(eventId).delete().await()
+    }
 }

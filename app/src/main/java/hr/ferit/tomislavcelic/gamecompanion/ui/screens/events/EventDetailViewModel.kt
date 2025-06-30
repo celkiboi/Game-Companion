@@ -19,6 +19,8 @@ class EventDetailViewModel(
     private val _event = MutableStateFlow<GameEvent?>(null)
     val event: StateFlow<GameEvent?> = _event
 
+    private val uid = auth.currentUser?.uid
+
     init {
         auth.currentUser?.uid?.let { uid ->
             viewModelScope.launch {
@@ -26,6 +28,16 @@ class EventDetailViewModel(
                     .map { list -> list.firstOrNull { it.id == eventId } }
                     .collect { single -> _event.value = single }
             }
+        }
+    }
+
+    fun delete(onDone: () -> Unit, onError: (Throwable) -> Unit) {
+        val u = uid ?: return
+        viewModelScope.launch {
+            try {
+                repo.deleteEvent(u, eventId)
+                onDone()
+            } catch (t: Throwable) { onError(t) }
         }
     }
 }

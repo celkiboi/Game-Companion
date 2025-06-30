@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -21,11 +23,14 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.room.Delete
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.Countdown
 import hr.ferit.tomislavcelic.gamecompanion.ui.time.formatForUi
 
@@ -46,13 +52,26 @@ fun EventDetailScreen(
     val vm: EventDetailViewModel = viewModel(factory = EventDetailVMFactory(eventId))
     val event by vm.event.collectAsState()
 
+    var askDelete by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(event?.title ?: "Event") },
+                title = {
+                    val title = if (event?.isChallenge == true) "Challenge" else "Event"
+                    Text(title)
+                },
                 navigationIcon = {
                     IconButton(onClick = { nav.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { askDelete = true },
+                        enabled = event != null
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete")
                     }
                 }
             )
@@ -158,6 +177,28 @@ fun EventDetailScreen(
                     }
                 )
             }
+        }
+
+        if (askDelete) {
+            AlertDialog(
+                onDismissRequest = { askDelete = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            vm.delete(
+                                onDone  = { nav.popBackStack() },
+                                onError = { /* TODO: Snackbar */ }
+                            )
+                            askDelete = false
+                        }
+                    ) { Text("Delete") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { askDelete = false }) { Text("Cancel") }
+                },
+                title = { Text("Delete event?") },
+                text = { Text("This action cannot be undone.") }
+            )
         }
     }
 }
