@@ -41,7 +41,6 @@ fun AppDrawerContent(
             modifier = Modifier.padding(16.dp)
         )
 
-        /* nav items */
         NavigationDrawerItem(
             label = { Text("Home") },
             selected = nav.currentDestination?.route == "home",
@@ -50,7 +49,7 @@ fun AppDrawerContent(
         NavigationDrawerItem(
             label = { Text("All events") },
             selected = nav.currentDestination?.route == "allevents",
-            onClick  = { closeAnd { } }
+            onClick  = { closeAnd { nav.navigateTopLevel("allevents") } }
         )
         NavigationDrawerItem(
             label = { Text("Challenges") },

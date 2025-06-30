@@ -10,6 +10,7 @@ import hr.ferit.tomislavcelic.gamecompanion.ui.screens.home.HomeScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.LoginScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import hr.ferit.tomislavcelic.gamecompanion.ui.screens.allevents.AllEventsScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.challenges.ChallengesScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.events.EventDetailScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GameDetailScreen
@@ -23,6 +24,7 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
         composable("games")   { GamesScreen(nav) }
         composable("home")  { HomeScreen(nav) }
         composable("challenges")  { ChallengesScreen(nav) }
+        composable("allevents") { AllEventsScreen(nav = nav) }
 
         composable(
             route = "game/{key}/{name}",

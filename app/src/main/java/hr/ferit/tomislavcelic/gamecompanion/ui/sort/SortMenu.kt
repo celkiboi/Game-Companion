@@ -17,7 +17,8 @@ import androidx.compose.runtime.setValue
 @Composable
 fun SortMenu(
     current: SortOption,
-    onPick: (SortOption) -> Unit
+    onPick: (SortOption) -> Unit,
+    progressEnabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -30,6 +31,9 @@ fun SortMenu(
         onDismissRequest = { expanded = false }
     ) {
         SortOption.entries.forEach { opt ->
+            if (!progressEnabled && opt.label == "Progress") {
+                return@forEach
+            }
             DropdownMenuItem(
                 text = { Text(opt.label) },
                 onClick = {
