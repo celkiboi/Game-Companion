@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.Countdown
-import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GamesViewModel.Companion.gameNameMap
 import hr.ferit.tomislavcelic.gamecompanion.ui.time.formatForUi
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +70,6 @@ fun EventDetailScreen(
         }
 
         val e = event!!
-        val gameName = gameNameMap[e.gameKey] ?: e.gameKey.uppercase()
 
         Column(
             Modifier
