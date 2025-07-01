@@ -1,17 +1,23 @@
 package hr.ferit.tomislavcelic.gamecompanion.ui.screens.events
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -51,8 +59,10 @@ fun EventDetailScreen(
 ) {
     val vm: EventDetailViewModel = viewModel(factory = EventDetailVMFactory(eventId))
     val event by vm.event.collectAsState()
+    val progress by vm.progress.collectAsState()
 
     var askDelete by remember { mutableStateOf(false) }
+    var showProgressDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -173,7 +183,20 @@ fun EventDetailScreen(
                         )
                     },
                     trailingContent = {
-                        if (e.solved) Icon(Icons.Default.Check, contentDescription = null)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (e.solved) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 4.dp)
+                                )
+                            }
+                            IconButton(onClick = { showProgressDialog = true }) {
+                                Icon(Icons.Default.Edit, contentDescription = "Update progress")
+                            }
+                        }
                     }
                 )
             }
@@ -198,6 +221,41 @@ fun EventDetailScreen(
                 },
                 title = { Text("Delete event?") },
                 text = { Text("This action cannot be undone.") }
+            )
+        }
+
+        if (showProgressDialog) {
+            var newValueText by remember(progress) {
+                mutableStateOf(progress?.toString() ?: "")
+            }
+
+            AlertDialog(
+                onDismissRequest = { showProgressDialog = false },
+                confirmButton = {
+                    TextButton(
+                        enabled = newValueText.toIntOrNull() != null,
+                        onClick = {
+                            newValueText.toIntOrNull()?.let { vm.setProgress(it) }
+                            showProgressDialog = false
+                        }
+                    ) { Text("Save") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showProgressDialog = false }) {
+                        Text("Cancel")
+                    }
+                },
+                title = { Text("Set progress") },
+                text = {
+                    OutlinedTextField(
+                        value = newValueText,
+                        onValueChange = { newValueText = it },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        label = { Text("Current progress") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             )
         }
     }

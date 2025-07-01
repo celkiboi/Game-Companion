@@ -21,12 +21,18 @@ class EventDetailViewModel(
 
     private val uid = auth.currentUser?.uid
 
+    private val _progress = MutableStateFlow<Int?>(null)
+    val  progress  : StateFlow<Int?> = _progress
+
     init {
         auth.currentUser?.uid?.let { uid ->
             viewModelScope.launch {
                 repo.observeUserEvents(uid)
                     .map { list -> list.firstOrNull { it.id == eventId } }
-                    .collect { single -> _event.value = single }
+                    .collect { ev ->
+                        _event.value = ev
+                        _progress.value = ev?.currentProgress
+                    }
             }
         }
     }
@@ -38,6 +44,17 @@ class EventDetailViewModel(
                 repo.deleteEvent(u, eventId)
                 onDone()
             } catch (t: Throwable) { onError(t) }
+        }
+    }
+
+    fun setProgress(value: Int) {
+        val u = uid ?: return
+        val safe = value.coerceAtLeast(0)
+        _progress.value = safe
+
+        viewModelScope.launch {
+            try   { repo.updateProgress(u, eventId, safe) }
+            catch (t: Throwable) { /* TODO snackbar */ }
         }
     }
 }

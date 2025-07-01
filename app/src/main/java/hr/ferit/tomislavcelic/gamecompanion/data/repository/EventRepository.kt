@@ -54,4 +54,7 @@ class EventRepository(
     suspend fun deleteEvent(uid: String, eventId: String) {
         userEvents(uid).document(eventId).delete().await()
     }
+
+    suspend fun updateProgress(uid: String, eventId: String,newProgress: Int)
+    = userEvents(uid).document(eventId).update("currentProgress", newProgress).await()
 }
