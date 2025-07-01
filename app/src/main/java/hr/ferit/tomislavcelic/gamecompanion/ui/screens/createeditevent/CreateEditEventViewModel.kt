@@ -112,4 +112,32 @@ class CreateEditEventViewModel(
             } catch (e: Throwable) { onError(e) }
         }
     }
+
+    fun applyOcrResult(text: String) {
+        val textLines = text.split('\n')
+        val textLinesCount = textLines.count()
+
+        if (textLinesCount >= 1) {
+            title.value = textLines[0]
+        }
+
+        val challengeRegex = Regex("""(?i)(?:challenge|goal|progress|score)?[^\dO]*(\d+|O)\s*/\s*(\d+)""")
+        if (textLinesCount >= 2) {
+            additionalInfo.value = ""
+            textLines.drop(1).forEach { line ->
+                val regexResult = challengeRegex.find(line)
+                if (regexResult != null) {
+                    _isChallenge.value = true
+                    goal.value  = regexResult.value
+                        .split("/")
+                        .getOrNull(1)
+                        ?.trim()
+                        ?.toIntOrNull()
+                        ?: 0
+                }
+                else
+                    additionalInfo.value += "${line}\n"
+            }
+        }
+    }
 }
