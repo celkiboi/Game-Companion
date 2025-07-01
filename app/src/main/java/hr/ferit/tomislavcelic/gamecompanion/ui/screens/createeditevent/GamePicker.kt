@@ -1,4 +1,4 @@
-package hr.ferit.tomislavcelic.gamecompanion.ui.screens.createevent
+package hr.ferit.tomislavcelic.gamecompanion.ui.screens.createeditevent
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem

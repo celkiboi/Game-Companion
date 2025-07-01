@@ -2,7 +2,6 @@ package hr.ferit.tomislavcelic.gamecompanion.core.nav
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideOut
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -17,7 +16,8 @@ import hr.ferit.tomislavcelic.gamecompanion.ui.screens.allevents.AllEventsScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.challenges.ChallengesScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.events.EventDetailScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.games.GameDetailScreen
-import hr.ferit.tomislavcelic.gamecompanion.ui.screens.createevent.CreateEventScreen
+import hr.ferit.tomislavcelic.gamecompanion.ui.screens.createeditevent.CreateEventScreen
+import hr.ferit.tomislavcelic.gamecompanion.ui.screens.createeditevent.EditEventScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -60,6 +60,9 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
             },
             enterTransition = {
                 slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(500))
+            },
+            popEnterTransition = {
+                null
             }
         ) { backStack ->
             val id = backStack.arguments?.getString("id")!!
@@ -85,6 +88,20 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
             val gameKey = backStack.arguments?.getString("gameKey")
             val isChallenge = backStack.arguments?.getBoolean("isChallenge") ?: false
             CreateEventScreen(nav, gameKey, isChallenge)
+        }
+
+        composable(
+            route = "editEvent/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            popExitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down, tween(500))
+            },
+            enterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up, tween(500))
+            }
+        ) { back ->
+            val id = back.arguments!!.getString("id")!!
+            EditEventScreen(nav = nav, eventId = id)
         }
     }
 }

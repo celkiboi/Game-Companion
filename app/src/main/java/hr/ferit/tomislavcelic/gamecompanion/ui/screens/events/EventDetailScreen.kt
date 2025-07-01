@@ -83,6 +83,13 @@ fun EventDetailScreen(
                     ) {
                         Icon(Icons.Default.Delete, contentDescription = "Delete")
                     }
+                    IconButton(
+                        onClick = { nav.navigate("editEvent/${event?.id}") },
+                        enabled = event != null
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = "Edit")
+                    }
+
                 }
             )
         }

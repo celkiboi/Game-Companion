@@ -2,6 +2,7 @@ package hr.ferit.tomislavcelic.gamecompanion.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
 import hr.ferit.tomislavcelic.gamecompanion.data.model.GameEvent
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -57,4 +58,10 @@ class EventRepository(
 
     suspend fun updateProgress(uid: String, eventId: String,newProgress: Int)
     = userEvents(uid).document(eventId).update("currentProgress", newProgress).await()
+
+    suspend fun updateEvent(uid: String, event: GameEvent) {
+        require(event.id.isNotBlank())
+        userEvents(uid).document(event.id).set(event.copy(id = ""), SetOptions.merge()).await()
+    }
+
 }

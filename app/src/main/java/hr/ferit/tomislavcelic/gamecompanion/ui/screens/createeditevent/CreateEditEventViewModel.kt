@@ -1,4 +1,4 @@
-package hr.ferit.tomislavcelic.gamecompanion.ui.screens.createevent
+package hr.ferit.tomislavcelic.gamecompanion.ui.screens.createeditevent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +19,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class CreateEventViewModel(
+class CreateEditEventViewModel(
+    private val original: GameEvent?,
     private val preselectKey: String?,
     private val initialIsChallenge: Boolean,
     authRepo: AuthRepository = AuthRepository(),
@@ -27,23 +28,26 @@ class CreateEventViewModel(
     private val gamesRepo: GamesRepository = GamesRepository()
 ) : ViewModel() {
 
-    private val _isChallenge = MutableStateFlow(initialIsChallenge)
-    val isChallenge = _isChallenge.asStateFlow()
-
     val allGames: StateFlow<List<Game>> =
         gamesRepo.observeAllGames(authRepo.currentUser?.uid)
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val title = MutableStateFlow("")
-    val selectedKey = MutableStateFlow(preselectKey ?: "")
-    val starts = MutableStateFlow<Timestamp?>(null)
-    val expires = MutableStateFlow<Timestamp?>(null)
-    val additionalInfo = MutableStateFlow("")
+    val title = MutableStateFlow(original?.title ?: "")
+    val selectedKey = MutableStateFlow(original?.gameKey ?: preselectKey ?: "")
+    val starts = MutableStateFlow(original?.starts )
+    val expires = MutableStateFlow(original?.expires )
+    val additionalInfo = MutableStateFlow(original?.additionalInfo ?: "")
 
-    val goal = MutableStateFlow(0)
-    val challengeInfo = MutableStateFlow("")
+    val goal = MutableStateFlow(original?.challengeGoal ?: 0)
+    val progress = MutableStateFlow(original?.currentProgress ?: 0)
+    val challengeInfo = MutableStateFlow(original?.challengeInfo ?: "")
+
+    private val _isChallenge = MutableStateFlow(initialIsChallenge || (original?.isChallenge ?: false))
+    val isChallenge = _isChallenge.asStateFlow()
 
     private val uid = authRepo.currentUser?.uid
+
+    private val isEdit = original != null
 
     init {
         viewModelScope.launch {
@@ -88,18 +92,23 @@ class CreateEventViewModel(
         viewModelScope.launch {
             try {
                 val event = GameEvent(
+                    id = original?.id ?: "",
                     title = title.value.trim(),
                     gameKey = selectedKey.value,
                     additionalInfo = additionalInfo.value,
                     starts = starts.value,
                     expires = expires.value,
                     isChallenge = isChallenge.value,
-                    currentProgress = 0,
+                    currentProgress = progress.value,
                     challengeGoal = goal.value,
                     challengeInfo = challengeInfo.value
                 )
-                val id = eventRepo.addEvent(uid, event)
-                onDone(id)
+                if (isEdit)
+                    eventRepo.updateEvent(uid, event)
+                else
+                    eventRepo.addEvent(uid, event)
+
+                onDone(event.id)
             } catch (e: Throwable) { onError(e) }
         }
     }

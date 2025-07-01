@@ -1,4 +1,4 @@
-package hr.ferit.tomislavcelic.gamecompanion.ui.screens.createevent
+package hr.ferit.tomislavcelic.gamecompanion.ui.screens.createeditevent
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,23 +29,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import hr.ferit.tomislavcelic.gamecompanion.data.model.GameEvent
 import hr.ferit.tomislavcelic.gamecompanion.ui.datetime.DateTimeField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import hr.ferit.tomislavcelic.gamecompanion.data.repository.GamesRepository.Companion.nameFromKey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventScreen(
-    nav: NavHostController,
-    presetGameKey: String?,
+fun CreateOrEditEventScaffold(
+    nav : NavHostController,
+    originalEvent : GameEvent? = null,
+    presetGameKey : String? = null,
     isChallenge:  Boolean
 ) {
-    val viewModel: CreateEventViewModel = viewModel(
+    val viewModel: CreateEditEventViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                CreateEventViewModel(presetGameKey, isChallenge) as T
+                CreateEditEventViewModel(originalEvent, presetGameKey, isChallenge) as T
         }
     )
 
