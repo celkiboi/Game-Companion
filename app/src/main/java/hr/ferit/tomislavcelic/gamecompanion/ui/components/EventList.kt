@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.derivedStateOf
@@ -70,42 +72,53 @@ fun EventList(
                 )
             }
         }
+        if (visibleEvents.isEmpty()) {
+            item{
+                Text(
+                    "Nothing to show",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                )
+            }
+        } else {
+            items(
+                items = visibleEvents,
+                key = { it.id }
+            ) { e ->
 
-        items(
-            items = visibleEvents,
-            key   = { it.id }
-        ) { e ->
-            ListItem(
-                headlineContent = { Text(e.title) },
+                ListItem(
+                    headlineContent = { Text(e.title) },
 
-                supportingContent = {
-                    Column {
-                        if (e.hasStarted) {
-                            Text("Expires ${e.expires.formatForUi()}")
-                            Countdown(e.expires)
-                        } else {
-                            Text("Starts  ${e.starts .formatForUi()}")
-                            Countdown(e.starts)
+                    supportingContent = {
+                        Column {
+                            if (e.hasStarted) {
+                                Text("Expires ${e.expires.formatForUi()}")
+                                Countdown(e.expires)
+                            } else {
+                                Text("Starts  ${e.starts.formatForUi()}")
+                                Countdown(e.starts)
+                            }
                         }
+                    },
+
+                    trailingContent = {
+                        Icon(
+                            imageVector =
+                                if (e.isChallenge)
+                                    Icons.Filled.EmojiEvents
+                                else
+                                    Icons.Filled.CalendarMonth,
+                            contentDescription = null
+                        )
+                    },
+
+                    modifier = Modifier.clickable {
+                        if (e.id.isNotBlank()) nav.navigate("event/${e.id}")
                     }
-                },
-
-                trailingContent = {
-                    Icon(
-                        imageVector =
-                            if (e.isChallenge)
-                                Icons.Filled.EmojiEvents
-                            else
-                                Icons.Filled.CalendarMonth,
-                        contentDescription = null
-                    )
-                },
-
-                modifier = Modifier.clickable {
-                    if (e.id.isNotBlank()) nav.navigate("event/${e.id}")
-                }
-            )
-            HorizontalDivider()
+                )
+                HorizontalDivider()
+            }
         }
     }
 }
