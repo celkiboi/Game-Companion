@@ -1,5 +1,6 @@
 package hr.ferit.tomislavcelic.gamecompanion.core.nav
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,6 +13,7 @@ import hr.ferit.tomislavcelic.gamecompanion.ui.screens.home.HomeScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.LoginScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.allevents.AllEventsScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.challenges.ChallengesScreen
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.events.EventDetailScreen
@@ -54,6 +56,12 @@ fun GCNavHost(startOn: Boolean, nav: NavHostController) {
             route = "event/{id}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType }
+            ),
+            deepLinks = listOf(
+                navDeepLink {
+                    action = Intent.ACTION_VIEW
+                    uriPattern = "gc://event/{id}"
+                }
             ),
             popExitTransition = {
                 slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(500))

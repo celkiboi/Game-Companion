@@ -1,6 +1,8 @@
 package hr.ferit.tomislavcelic.gamecompanion
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import com.google.firebase.FirebaseApp
 import androidx.activity.compose.setContent
@@ -13,28 +15,45 @@ import hr.ferit.tomislavcelic.gamecompanion.core.nav.GCNavHost
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.AuthViewModel
 import hr.ferit.tomislavcelic.gamecompanion.ui.theme.GameCompanionTheme
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
 
+    private lateinit var nav: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
 
         setContent {
+            nav = rememberNavController()
             GameCompanionTheme {
                 val authVM: AuthViewModel = viewModel()
-                val nav = rememberNavController()
+                val nav = nav
                 val user by authVM.user.collectAsState()
 
                 LaunchedEffect(user) {
-                    nav.navigate(if (user == null) "login" else "home") {
-                        popUpTo(nav.graph.startDestinationId) { inclusive = true }
+                    val dest = nav.currentDestination?.route ?: return@LaunchedEffect
+                    if (dest == "login") {
+                        nav.navigate(if (user == null) "login" else "home") {
+                            popUpTo(nav.graph.startDestinationId) { inclusive = true }
+                        }
                     }
                 }
 
                 GCNavHost(startOn = user != null, nav = nav)
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        Log.d("DeepLink",
+            "newIntent: ${intent.action}  uri=${intent.data}  extras=${intent.extras}")
+        if (::nav.isInitialized) {
+            nav.handleDeepLink(intent)
         }
     }
 }
