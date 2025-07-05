@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.AppDrawerContent
 import hr.ferit.tomislavcelic.gamecompanion.ui.components.EventList
+import hr.ferit.tomislavcelic.gamecompanion.ui.filter.FilterMenu
 import hr.ferit.tomislavcelic.gamecompanion.ui.screens.login.AuthViewModel
 import hr.ferit.tomislavcelic.gamecompanion.ui.sort.SortMenu
 import kotlinx.coroutines.launch
@@ -64,6 +65,13 @@ fun AllEventsScreen(
                             current = sortOpt,
                             onPick = allViewModel::setSort,
                             progressEnabled = false
+                        )
+
+                        FilterMenu(
+                            currentTime = allViewModel.timeFilter.collectAsState().value,
+                            currentCompletion = allViewModel.completionFilter.collectAsState().value,
+                            onPickTime = allViewModel::setTimeFilter,
+                            onPickCompletion = null
                         )
                     }
                 )

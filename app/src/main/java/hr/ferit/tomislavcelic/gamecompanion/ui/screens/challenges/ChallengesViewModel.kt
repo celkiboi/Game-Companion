@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import hr.ferit.tomislavcelic.gamecompanion.data.model.GameEvent
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.AuthRepository
 import hr.ferit.tomislavcelic.gamecompanion.data.repository.EventRepository
+import hr.ferit.tomislavcelic.gamecompanion.ui.filter.CompletionFilter
+import hr.ferit.tomislavcelic.gamecompanion.ui.filter.TimeFilter
+import hr.ferit.tomislavcelic.gamecompanion.ui.filter.filtered
 import hr.ferit.tomislavcelic.gamecompanion.ui.sort.SortOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,10 +25,19 @@ class ChallengesViewModel(
     private val _sort = MutableStateFlow(SortOption.SOON)
     val sort: StateFlow<SortOption> = _sort
 
+    private val _timeFilter = MutableStateFlow(TimeFilter.ALL)
+    private val _completionFilter = MutableStateFlow(CompletionFilter.BOTH)
+    val timeFilter : StateFlow<TimeFilter> = _timeFilter
+    val completionFilter : StateFlow<CompletionFilter> = _completionFilter
+
     private val _challenges = MutableStateFlow<List<GameEvent>>(emptyList())
-    val challenges: StateFlow<List<GameEvent>> =
-        combine(_challenges, _sort) { list, opt -> list.sortedBy(opt) }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val challenges: StateFlow<List<GameEvent>> = combine(
+        _challenges, _sort, _timeFilter, _completionFilter
+    ) { list, sortOpt, timeF, compF ->
+        list
+            .filtered(timeF, compF)
+            .sortedBy(sortOpt)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
         authRepo.currentUser?.uid?.let { uid ->
@@ -37,4 +49,6 @@ class ChallengesViewModel(
     }
 
     fun setSort(opt: SortOption) { _sort.value = opt }
+    fun setTimeFilter(f: TimeFilter) { _timeFilter.value = f }
+    fun setCompletionFilter(f: CompletionFilter) { _completionFilter.value = f }
 }
